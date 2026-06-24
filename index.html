@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SKF Table Tennis Season 2</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="brand">SKF</div>
+    <h1>Table Tennis Season 2</h1>
+    <p>Schedules • Teams • Scores • Standings</p>
+    <div class="loginbar">
+      <span id="roleBadge">Viewer Mode</span>
+      <button id="loginBtn" class="btn light">Manager Login</button>
+      <button id="logoutBtn" class="btn light hide">Logout</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <a href="#dashboard">Dashboard</a>
+    <a href="#players">Players</a>
+    <a href="#teams">Doubles Teams</a>
+    <a href="#schedule">Schedule</a>
+    <a href="#scores">Scores</a>
+    <a href="#standings">Standings</a>
+    <a href="#rules">Rules</a>
+    <a href="#admin" class="admin-only">Admin</a>
+  </nav>
+
+  <main>
+    <section id="dashboard" class="page active">
+      <div class="cards">
+        <div class="card"><h3>Singles Players</h3><b id="dashPlayers">0</b></div>
+        <div class="card"><h3>Doubles Teams</h3><b id="dashTeams">0</b></div>
+        <div class="card"><h3>Total Matches</h3><b id="dashMatches">0</b></div>
+        <div class="card"><h3>Completed</h3><b id="dashDone">0</b></div>
+      </div>
+      <div class="card"><h2>Leaderboard</h2><div id="dashLeaderboard"></div></div>
+      <div class="card"><h2>Upcoming Matches</h2><div id="dashUpcoming"></div></div>
+    </section>
+
+    <section id="players" class="page">
+      <div class="card manager-only"><h2>Add Singles Player</h2><input id="playerName" placeholder="Player name"><button class="btn" onclick="addPlayer()">Add Player</button></div>
+      <div class="card"><h2>Players</h2><div id="playersList"></div></div>
+    </section>
+
+    <section id="teams" class="page">
+      <div class="card manager-only"><h2>Add Doubles Team</h2><input id="teamName" placeholder="Team name, e.g. Rahul & Sunil"><button class="btn" onclick="addTeam()">Add Team</button></div>
+      <div class="card"><h2>Doubles Teams</h2><div id="teamsList"></div></div>
+    </section>
+
+    <section id="schedule" class="page">
+      <div class="card manager-only"><h2>Generate Schedule</h2>
+        <button class="btn" onclick="generateSchedule('singles')">Generate Singles Round Robin</button>
+        <button class="btn" onclick="generateSchedule('doubles')">Generate Doubles Round Robin</button>
+        <button class="btn danger" onclick="clearMatches()">Clear All Matches</button>
+      </div>
+      <div class="card"><h2>Schedule</h2><div id="scheduleList"></div></div>
+    </section>
+
+    <section id="scores" class="page">
+      <div class="card manager-only"><h2>Enter Score</h2><select id="matchSelect" onchange="loadScoreForm()"></select><div id="scoreForm"></div></div>
+      <div class="card viewer-note"><h2>Scores</h2><p>Only manager can enter or update scores. Current results are shown in Schedule and Standings.</p></div>
+    </section>
+
+    <section id="standings" class="page">
+      <div class="card"><h2>Singles Standings</h2><div id="singlesStandings"></div></div>
+      <div class="card"><h2>Doubles Standings</h2><div id="doublesStandings"></div></div>
+    </section>
+
+    <section id="rules" class="page">
+      <div class="card"><h2>Season 2 Rules</h2>
+        <h3>Match Format</h3><p>Best of 3 games. Each game is to 11 points. Win by 2.</p>
+        <h3>Basement Rule</h3><p>If the ball hits the ceiling or any basement obstruction, there is no reserve. Point goes to the opposite player/team.</p>
+        <h3>Mandatory Service Rules</h3><p>The server must toss the ball upward before contact. The ball must be visible and not hidden. Serve starts behind the end line and must touch server side first, then opponent side.</p>
+      </div>
+    </section>
+
+    <section id="admin" class="page admin-only">
+      <div class="card"><h2>Admin Tools</h2>
+        <button class="btn" onclick="exportCSV()">Export Standings CSV</button>
+        <button class="btn" onclick="downloadBackup()">Download Backup JSON</button>
+        <button class="btn danger" onclick="resetAll()">Reset All Data</button>
+        <p class="muted">Default manager password: <b>skf2026</b>. Change it in assets/app.js before uploading.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="loginModal" class="modal hide">
+    <div class="modal-card">
+      <h2>Manager Login</h2>
+      <input id="passwordInput" type="password" placeholder="Enter manager password">
+      <button class="btn" onclick="managerLogin()">Login</button>
+      <button class="btn light" onclick="closeLogin()">Cancel</button>
+      <p class="muted">Static GitHub Pages login is basic protection only, not a secure database login.</p>
+    </div>
+  </div>
+
+  <script src="assets/firebase-config.js"></script>
+  <script type="module" src="assets/app.js"></script>
+</body>
+</html>
