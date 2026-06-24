@@ -22,6 +22,7 @@
     <a href="#dashboard">Dashboard</a>
     <a href="#players">Players</a>
     <a href="#groups">Groups</a>
+    <a href="#stadiums">Stadiums</a>
     <a href="#schedule">Group Matches</a>
     <a href="#scores">Scores</a>
     <a href="#standings">Standings</a>
@@ -60,13 +61,45 @@
       <div class="card"><h2>Groups & Assigned Players</h2><div id="groupsList"></div></div>
     </section>
 
+    <section id="stadiums" class="page">
+      <div class="card manager-only"><h2>Create Stadiums</h2>
+        <p class="muted">Manager can add stadiums/tables/locations used for scheduling matches.</p>
+        <input id="stadiumName" placeholder="Stadium name, e.g. Stadium 1 / Table 1">
+        <input id="stadiumLocation" placeholder="Optional location, e.g. Basement / Clubhouse">
+        <button class="btn" onclick="addStadium()">Add Stadium</button>
+      </div>
+      <div class="card"><h2>Stadiums</h2><div id="stadiumsList"></div></div>
+    </section>
+
     <section id="schedule" class="page">
       <div class="card manager-only"><h2>Generate Group Matches</h2>
         <p class="muted">Creates round-robin matches only within each group.</p>
         <button class="btn" onclick="generateGroupMatches()">Generate Group Round Robin</button>
         <button class="btn danger" onclick="clearGroupMatches()">Clear Group Matches</button>
       </div>
-      <div class="card"><h2>Group Match Schedule</h2><div id="scheduleList"></div></div>
+      <div class="card manager-only"><h2>Create / Schedule Match Manually</h2>
+        <p class="muted">Only Manager can create or schedule matches. Scorer can only enter scores.</p>
+        <label>Match Type</label>
+        <select id="manualMatchType"><option value="group">Group Match</option><option value="friendly">Practice / Friendly</option><option value="playoff">Playoff / Tiebreaker</option></select>
+        <label>Group</label>
+        <select id="manualMatchGroup"></select>
+        <label>Player 1</label>
+        <select id="manualMatchPlayerA"></select>
+        <label>Player 2</label>
+        <select id="manualMatchPlayerB"></select>
+        <label>Round / Label</label>
+        <input id="manualMatchRound" placeholder="Example: Round 1 / Week 1 / Tiebreaker">
+        <label>Date</label>
+        <input id="manualMatchDate" type="date">
+        <label>Time</label>
+        <input id="manualMatchTime" type="time">
+        <label>Stadium</label>
+        <select id="manualMatchStadium"></select>
+        <label>Table / Location Notes</label>
+        <input id="manualMatchTable" placeholder="Optional notes, e.g. Side table / Basement">
+        <button class="btn" onclick="addManualMatch()">Add Manual Match</button>
+      </div>
+      <div class="card"><h2>Match Schedule</h2><div id="scheduleList"></div></div>
     </section>
 
     <section id="scores" class="page">
@@ -84,9 +117,16 @@
     <section id="knockouts" class="page">
       <div class="card manager-only"><h2>Generate Knockouts</h2>
         <label>Qualifiers per group</label>
-        <select id="qualifiersPerGroup"><option value="2">Top 2</option><option value="3">Top 3</option><option value="4">Top 4</option></select>
-        <button class="btn" onclick="generateKnockouts()">Generate Knockout Bracket</button>
+        <input id="qualifiersPerGroup" type="number" min="1" value="2" placeholder="Example: 2, 3, 4, 5">
+        <button class="btn" onclick="generateKnockouts()">Auto Generate from Standings</button>
         <button class="btn danger" onclick="clearKnockouts()">Clear Knockouts</button>
+      </div>
+      <div class="card manager-only"><h2>Manual Knockout Match</h2>
+        <p class="muted">Use this if you want to manually choose any players for quarterfinals, semifinals, finals, or extra playoff matches.</p>
+        <input id="manualRound" placeholder="Round name, e.g. Quarterfinal / Semifinal / Final">
+        <select id="manualPlayerA"></select>
+        <select id="manualPlayerB"></select>
+        <button class="btn" onclick="addManualKnockout()">Add Manual Knockout Match</button>
       </div>
       <div class="card"><h2>Knockout Bracket</h2><div id="knockoutList"></div></div>
     </section>
@@ -113,7 +153,7 @@
   <div id="loginModal" class="modal hide"><div class="modal-card">
     <h2>Manager / Scorer Login</h2><input id="passwordInput" type="password" placeholder="Enter password">
     <button class="btn" onclick="managerLogin()">Login</button><button class="btn light" onclick="closeLogin()">Cancel</button>
-    <!--<p class="muted">Manager password: skf2026<br>Scorer password: score2026</p> -->
+    <p class="muted">Enter your authorized tournament password.</p>
   </div></div>
 
   <script src="assets/firebase-config.js"></script>
