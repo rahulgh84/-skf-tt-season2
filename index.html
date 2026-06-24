@@ -10,10 +10,10 @@
   <header class="hero">
     <div class="brand">SKF</div>
     <h1>Table Tennis Season 2</h1>
-    <p>Schedules • Teams • Scores • Standings</p>
+    <p>Groups • Fixtures • Scores • Standings • Knockouts</p>
     <div class="loginbar">
       <span id="roleBadge">Viewer Mode</span>
-      <button id="loginBtn" class="btn light">Manager Login</button>
+      <button id="loginBtn" class="btn light">Login</button>
       <button id="logoutBtn" class="btn light hide">Logout</button>
     </div>
   </header>
@@ -21,82 +21,100 @@
   <nav class="tabs">
     <a href="#dashboard">Dashboard</a>
     <a href="#players">Players</a>
-    <a href="#teams">Doubles Teams</a>
-    <a href="#schedule">Schedule</a>
+    <a href="#groups">Groups</a>
+    <a href="#schedule">Group Matches</a>
     <a href="#scores">Scores</a>
     <a href="#standings">Standings</a>
+    <a href="#knockouts">Knockouts</a>
     <a href="#rules">Rules</a>
-    <a href="#admin" class="admin-only">Admin</a>
+    <a href="#manager" class="manager-only">Manager</a>
   </nav>
 
   <main>
     <section id="dashboard" class="page active">
       <div class="cards">
-        <div class="card"><h3>Singles Players</h3><b id="dashPlayers">0</b></div>
-        <div class="card"><h3>Doubles Teams</h3><b id="dashTeams">0</b></div>
-        <div class="card"><h3>Total Matches</h3><b id="dashMatches">0</b></div>
+        <div class="card"><h3>Players</h3><b id="dashPlayers">0</b></div>
+        <div class="card"><h3>Groups</h3><b id="dashGroups">0</b></div>
+        <div class="card"><h3>Group Matches</h3><b id="dashMatches">0</b></div>
         <div class="card"><h3>Completed</h3><b id="dashDone">0</b></div>
       </div>
-      <div class="card"><h2>Leaderboard</h2><div id="dashLeaderboard"></div></div>
+      <div class="card"><h2>Group Leaders</h2><div id="dashLeaderboard"></div></div>
       <div class="card"><h2>Upcoming Matches</h2><div id="dashUpcoming"></div></div>
     </section>
 
     <section id="players" class="page">
-      <div class="card manager-only"><h2>Add Singles Player</h2><input id="playerName" placeholder="Player name"><button class="btn" onclick="addPlayer()">Add Player</button></div>
+      <div class="card manager-only"><h2>Add Player</h2>
+        <input id="playerName" placeholder="Player name">
+        <select id="playerGroup"></select>
+        <button class="btn" onclick="addPlayer()">Add Player</button>
+      </div>
       <div class="card"><h2>Players</h2><div id="playersList"></div></div>
     </section>
 
-    <section id="teams" class="page">
-      <div class="card manager-only"><h2>Add Doubles Team</h2><input id="teamName" placeholder="Team name, e.g. Rahul & Sunil"><button class="btn" onclick="addTeam()">Add Team</button></div>
-      <div class="card"><h2>Doubles Teams</h2><div id="teamsList"></div></div>
+    <section id="groups" class="page">
+      <div class="card manager-only"><h2>Create Groups</h2>
+        <p class="muted">For 12–14 players, use 2 groups or 3 groups. Example: Group A and Group B.</p>
+        <input id="groupName" placeholder="Group name, e.g. Group A">
+        <button class="btn" onclick="addGroup()">Add Group</button>
+      </div>
+      <div class="card"><h2>Groups & Assigned Players</h2><div id="groupsList"></div></div>
     </section>
 
     <section id="schedule" class="page">
-      <div class="card manager-only"><h2>Generate Schedule</h2>
-        <button class="btn" onclick="generateSchedule('singles')">Generate Singles Round Robin</button>
-        <button class="btn" onclick="generateSchedule('doubles')">Generate Doubles Round Robin</button>
-        <button class="btn danger" onclick="clearMatches()">Clear All Matches</button>
+      <div class="card manager-only"><h2>Generate Group Matches</h2>
+        <p class="muted">Creates round-robin matches only within each group.</p>
+        <button class="btn" onclick="generateGroupMatches()">Generate Group Round Robin</button>
+        <button class="btn danger" onclick="clearGroupMatches()">Clear Group Matches</button>
       </div>
-      <div class="card"><h2>Schedule</h2><div id="scheduleList"></div></div>
+      <div class="card"><h2>Group Match Schedule</h2><div id="scheduleList"></div></div>
     </section>
 
     <section id="scores" class="page">
-      <div class="card manager-only"><h2>Enter Score</h2><select id="matchSelect" onchange="loadScoreForm()"></select><div id="scoreForm"></div></div>
-      <div class="card viewer-note"><h2>Scores</h2><p>Only manager can enter or update scores. Current results are shown in Schedule and Standings.</p></div>
+      <div class="card scorekeeper-only"><h2>Enter Score</h2>
+        <select id="matchSelect" onchange="loadScoreForm()"></select>
+        <div id="scoreForm"></div>
+      </div>
+      <div class="card viewer-note"><h2>Scores</h2><p>Manager and scorer can enter scores. Viewers can see updated results in Schedule, Standings, and Knockouts.</p></div>
     </section>
 
     <section id="standings" class="page">
-      <div class="card"><h2>Singles Standings</h2><div id="singlesStandings"></div></div>
-      <div class="card"><h2>Doubles Standings</h2><div id="doublesStandings"></div></div>
+      <div class="card"><h2>Group Standings</h2><div id="groupStandings"></div></div>
+    </section>
+
+    <section id="knockouts" class="page">
+      <div class="card manager-only"><h2>Generate Knockouts</h2>
+        <label>Qualifiers per group</label>
+        <select id="qualifiersPerGroup"><option value="2">Top 2</option><option value="3">Top 3</option><option value="4">Top 4</option></select>
+        <button class="btn" onclick="generateKnockouts()">Generate Knockout Bracket</button>
+        <button class="btn danger" onclick="clearKnockouts()">Clear Knockouts</button>
+      </div>
+      <div class="card"><h2>Knockout Bracket</h2><div id="knockoutList"></div></div>
     </section>
 
     <section id="rules" class="page">
       <div class="card"><h2>Season 2 Rules</h2>
+        <h3>Group Stage</h3><p>Players are assigned to groups. Group matches are round-robin within the same group only.</p>
+        <h3>Qualification</h3><p>Manager can select Top 2, Top 3, or Top 4 from each group for knockouts. For two groups with Top 2, semifinals are A1 vs B2 and B1 vs A2.</p>
         <h3>Match Format</h3><p>Best of 3 games. Each game is to 11 points. Win by 2.</p>
-        <h3>Basement Rule</h3><p>If the ball hits the ceiling or any basement obstruction, there is no reserve. Point goes to the opposite player/team.</p>
+        <h3>Basement Rule</h3><p>If the ball hits the ceiling or any basement obstruction, there is no reserve. Point goes to the opposite player.</p>
         <h3>Mandatory Service Rules</h3><p>The server must toss the ball upward before contact. The ball must be visible and not hidden. Serve starts behind the end line and must touch server side first, then opponent side.</p>
       </div>
     </section>
 
-    <section id="admin" class="page admin-only">
-      <div class="card"><h2>Admin Tools</h2>
+    <section id="manager" class="page manager-only">
+      <div class="card"><h2>Manager Tools</h2>
         <button class="btn" onclick="exportCSV()">Export Standings CSV</button>
         <button class="btn" onclick="downloadBackup()">Download Backup JSON</button>
         <button class="btn danger" onclick="resetAll()">Reset All Data</button>
-        <p class="muted">Default manager password: <b>skf2026</b>. Change it in assets/app.js before uploading.</p>
       </div>
     </section>
   </main>
 
-  <div id="loginModal" class="modal hide">
-    <div class="modal-card">
-      <h2>Manager Login</h2>
-      <input id="passwordInput" type="password" placeholder="Enter manager password">
-      <button class="btn" onclick="managerLogin()">Login</button>
-      <button class="btn light" onclick="closeLogin()">Cancel</button>
-      <p class="muted">Static GitHub Pages login is basic protection only, not a secure database login.</p>
-    </div>
-  </div>
+  <div id="loginModal" class="modal hide"><div class="modal-card">
+    <h2>Manager / Scorer Login</h2><input id="passwordInput" type="password" placeholder="Enter password">
+    <button class="btn" onclick="managerLogin()">Login</button><button class="btn light" onclick="closeLogin()">Cancel</button>
+    <p class="muted">Manager password: skf2026<br>Scorer password: score2026</p>
+  </div></div>
 
   <script src="assets/firebase-config.js"></script>
   <script type="module" src="assets/app.js"></script>
